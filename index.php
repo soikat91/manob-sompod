@@ -1,3 +1,18 @@
+<?php
+require_once 'config.php';
+
+// Fetch latest news (limit 3)
+$latest_news_query = "SELECT * FROM news ORDER BY created_at DESC LIMIT 3";
+$latest_news_result = $conn->query($latest_news_query);
+
+// Fetch latest activities (limit 3)
+$latest_activities_query = "SELECT * FROM activities ORDER BY created_at DESC LIMIT 3";
+$latest_activities_result = $conn->query($latest_activities_query);
+
+// Fetch services
+$services_query = "SELECT * FROM services ORDER BY created_at DESC LIMIT 6";
+$services_result = $conn->query($services_query);
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,75 +41,7 @@
   </head>
 
   <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top custom-navbar">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="index.html">
-          <span class="brand-highlight">Manob</span> Sompod
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNavbar"
-          aria-controls="mainNavbar"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="mainNavbar">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
-            </li>
-
-            <!-- About Dropdown -->
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="about.html"
-                id="aboutDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                About
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="aboutDropdown">
-                <li><a class="dropdown-item" href="about.html">About Us</a></li>
-                <li><a class="dropdown-item" href="mission.html">Our Mission</a></li>
-                <li><a class="dropdown-item" href="team.html">Our Team</a></li>
-                <li><a class="dropdown-item" href="board-members.html">Our Board Members</a></li>
-              </ul>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="activities.html">Activities</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="services.html">Services</a>
-            </li>
-
-            <!-- <li class="nav-item">
-              <a class="nav-link" href="news.html">News</a>
-            </li> -->
-
-            <li class="nav-item">
-              <a class="nav-link" href="gallery.html">Gallery</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link btn btn-sm btn-outline-light ms-lg-3 px-3" href="contact.html">
-                Contact
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <?php include 'includes/navbar.php'; ?>
 
     <!-- Hero / Home Section -->
     <section id="home" class="hero-section d-flex align-items-center">
@@ -109,10 +56,10 @@
               We empower communities across Bangladesh through evidence-based programs in skills development, capacity building, and social innovation. Join us in creating sustainable change that transforms lives.
             </p>
             <div class="d-flex flex-wrap gap-3 mb-4">
-              <a href="about.html" class="btn btn-primary btn-lg px-4">
+              <a href="about.php" class="btn btn-primary btn-lg px-4">
                 <span class="me-2">📖</span> Our Story
               </a>
-              <a href="activities.html" class="btn btn-outline-primary btn-lg px-4">
+              <a href="activities.php" class="btn btn-outline-primary btn-lg px-4">
                 <span class="me-2"></span> View Programs
               </a>
             </div>
@@ -237,7 +184,7 @@
                 </div>
               </div>
             </div>
-            <a href="about.html" class="btn btn-primary px-4">Learn More About Us</a>
+            <a href="about.php" class="btn btn-primary px-4">Learn More About Us</a>
           </div>
         </div>
       </div>
@@ -267,7 +214,7 @@
                 <small class="opacity-75">Revenue Generated</small>
               </div>
             </div>
-            <a href="gallery.html" class="btn btn-light btn-lg px-4">View More Stories</a>
+            <a href="gallery.php" class="btn btn-light btn-lg px-4">View More Stories</a>
           </div>
           <div class="col-lg-6">
             <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
@@ -289,63 +236,23 @@
         </div>
 
         <div class="row g-4">
+          <?php while ($activity = $latest_activities_result->fetch_assoc()) { ?>
           <div class="col-lg-4 col-md-6">
             <div class="program-card h-100">
               <div class="program-header">
                 <div class="program-icon">🎯</div>
                 <div>
-                  <h5 class="mb-1">Skills Development</h5>
-                  <small class="text-muted">Professional Training Programs</small>
+                  <h5 class="mb-1"><?php echo htmlspecialchars($activity['title']); ?></h5>
+                  <small class="text-muted"><?php echo date('M d, Y', strtotime($activity['date'])); ?></small>
                 </div>
               </div>
               <p class="text-muted mb-3">
-                Comprehensive skill development including digital literacy, entrepreneurship, leadership, and vocational training for sustainable livelihoods.
+                <?php echo htmlspecialchars(substr($activity['description'], 0, 150)) . '...'; ?>
               </p>
-              <div class="program-stats">
-                <div class="stat"><strong>150+</strong> Programs</div>
-                <div class="stat"><strong>8,500+</strong> Beneficiaries</div>
-              </div>
-              <a href="activities.html" class="btn btn-outline-primary btn-sm mt-3">Learn More</a>
+              <a href="activities.php" class="btn btn-outline-primary btn-sm mt-3">Learn More</a>
             </div>
           </div>
-          <div class="col-lg-4 col-md-6">
-            <div class="program-card h-100">
-              <div class="program-header">
-                <div class="program-icon">🤝</div>
-                <div>
-                  <h5 class="mb-1">Community Development</h5>
-                  <small class="text-muted">Grassroots Empowerment</small>
-                </div>
-              </div>
-              <p class="text-muted mb-3">
-                Health awareness, women's empowerment, child protection, and sustainable livelihood programs in rural and urban communities.
-              </p>
-              <div class="program-stats">
-                <div class="stat"><strong>65+</strong> Projects</div>
-                <div class="stat"><strong>25</strong> Districts</div>
-              </div>
-              <a href="activities.html" class="btn btn-outline-primary btn-sm mt-3">Learn More</a>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <div class="program-card h-100">
-              <div class="program-header">
-                <div class="program-icon">📊</div>
-                <div>
-                  <h5 class="mb-1">Research & Advocacy</h5>
-                  <small class="text-muted">Evidence-Based Solutions</small>
-                </div>
-              </div>
-              <p class="text-muted mb-3">
-                Action research, policy analysis, and advocacy for marginalized communities to inform evidence-based programming and policy decisions.
-              </p>
-              <div class="program-stats">
-                <div class="stat"><strong>25+</strong> Studies</div>
-                <div class="stat"><strong>12</strong> Policy Briefs</div>
-              </div>
-              <a href="activities.html" class="btn btn-outline-primary btn-sm mt-3">Learn More</a>
-            </div>
-          </div>
+          <?php } ?>
         </div>
       </div>
     </section>
@@ -398,46 +305,50 @@
         </div>
 
         <div class="row g-4">
+          <?php while ($service = $services_result->fetch_assoc()) { ?>
           <div class="col-md-3 col-sm-6">
             <div class="service-card h-100">
               <span class="icon-badge">🧭</span>
-              <h6>Organizational Development</h6>
+              <h6><?php echo htmlspecialchars($service['title']); ?></h6>
               <p class="small text-muted mb-0">
-                Strategic HR planning, organizational restructuring, and institutional capacity assessment for NGOs and corporate clients.
+                <?php echo htmlspecialchars(substr($service['description'], 0, 100)) . '...'; ?>
               </p>
             </div>
           </div>
-          <div class="col-md-3 col-sm-6">
-            <div class="service-card h-100">
-              <span class="icon-badge">🎓</span>
-              <h6>Customized Training Solutions</h6>
-              <p class="small text-muted mb-0">
-                Tailored training modules on leadership, project management, financial literacy, and technical skills for various sectors.
-              </p>
-            </div>
-          </div>
-          <div class="col-md-3 col-sm-6">
-            <div class="service-card h-100">
-              <span class="icon-badge">🗺️</span>
-              <h6>Project Implementation Support</h6>
-              <p class="small text-muted mb-0">
-                Full-cycle project management including planning, implementation, and sustainability planning for development initiatives.
-              </p>
-            </div>
-          </div>
-          <div class="col-md-3 col-sm-6">
-            <div class="service-card h-100">
-              <span class="icon-badge">📊</span>
-              <h6>Impact Assessment &amp; Evaluation</h6>
-              <p class="small text-muted mb-0">
-                Results-based monitoring systems, impact evaluation studies, and organizational performance assessments.
-              </p>
-            </div>
-          </div>
+          <?php } ?>
         </div>
       </div>
     </section>
-  
+
+    <!-- Latest News Section -->
+    <section id="news" class="section-padding">
+      <div class="container">
+        <div class="text-center mb-5">
+          <div class="pill mb-3">📰 Latest News</div>
+          <h2 class="section-title mb-3">Stay Updated with Our <span>Latest News</span></h2>
+          <p class="text-muted col-lg-8 mx-auto">
+            Read about our recent activities, achievements, and insights in human development and community empowerment.
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <?php while ($news = $latest_news_result->fetch_assoc()) { ?>
+          <div class="col-lg-4 col-md-6">
+            <div class="news-card h-100">
+              <?php if ($news['image']) { ?>
+              <img src="<?php echo htmlspecialchars($news['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($news['title']); ?>">
+              <?php } ?>
+              <div class="card-body">
+                <h6 class="card-title"><?php echo htmlspecialchars($news['title']); ?></h6>
+                <p class="card-text"><?php echo htmlspecialchars(substr($news['content'], 0, 100)) . '...'; ?></p>
+                <small class="text-muted"><?php echo date('M d, Y', strtotime($news['date'])); ?></small>
+              </div>
+            </div>
+          </div>
+          <?php } ?>
+        </div>
+      </div>
+    </section>
 
     <!-- Contact Section -->
     <!-- <section id="contact" class="section-padding contact-section">
@@ -514,64 +425,9 @@
       </div>
     </section> -->
 
-    <!-- Footer -->
-    <footer class="footer-pro">
-      <div class="container footer-top">
-        <div class="row g-4">
-          <div class="col-md-4">
-            <div class="footer-brand mb-2"><span class="brand-highlight">Manob</span> Sompod</div>
-            <p class="small mb-3">
-              Established in 2005, we are dedicated to sustainable human development through innovative training programs, research initiatives, and community engagement across Bangladesh.
-            </p>
-            <div>
-              <a href="#" class="social-icon" aria-label="Facebook">f</a>
-              <a href="#" class="social-icon" aria-label="LinkedIn">in</a>
-              <a href="#" class="social-icon" aria-label="YouTube">▶</a>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <h6 class="text-uppercase small text-muted mb-3">Explore</h6>
-            <a class="footer-link" href="index.html">Home</a>
-            <a class="footer-link" href="about.html">About</a>
-            <a class="footer-link" href="services.html">Services</a>
-            <a class="footer-link" href="news.html">News</a>
-          </div>
-          <div class="col-md-3">
-            <h6 class="text-uppercase small text-muted mb-3">Programs</h6>
-            <a class="footer-link" href="activities.html">Activities</a>
-            <a class="footer-link" href="mission.html">Our Mission</a>
-            <a class="footer-link" href="team.html">Our Team</a>
-            <a class="footer-link" href="board-members.html">Board Members</a>
-          </div>
-          <div class="col-md-3">
-            <h6 class="text-uppercase small text-muted mb-3">Contact</h6>
-            <p class="small mb-1">Email: info@manobsompod.org</p>
-            <p class="small mb-1">Phone: +880-2-9661234</p>
-            <p class="small mb-3">Address: House 45, Road 12, Dhanmondi, Dhaka</p>
-            <a class="btn btn-primary btn-sm px-3" href="contact.html">Get in touch</a>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom text-center">
-        <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center">
-          <p class="small mb-2 mb-sm-0">&copy; <span id="year"></span> Manob Sompod. All rights reserved.</p>
-          <p class="small mb-0">Developed By Grammen Communications.</p>
-        </div>
-      </div>
-    </footer>
+    <?php include 'includes/footer.php'; ?>
 
-    <!-- Bootstrap JS Bundle -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
 
-    <!-- Custom JS -->
-    <script>
-      // Set current year in footer
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
   </body>
 </html>
 
